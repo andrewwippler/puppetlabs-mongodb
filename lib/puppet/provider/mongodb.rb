@@ -139,7 +139,7 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     out.gsub!(/ObjectId\(([^)]*)\)/, '\1')
     out.gsub!(/ISODate\((.+?)\)/, '\1 ')
     out.gsub!(/^Error\:.+/, '')
-    out.gsub!(/(ISODate|ObjectId)\((.+?)\)/, '\2 ').gsub!(/(Timestamp|NumberLong)\((.+?)\)/,'"\2"')
+    out.gsub!(/(Timestamp|NumberLong)\((.+?)\)/,'"\2"')
     res = JSON.parse out
 
     return res['ismaster']
