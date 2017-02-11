@@ -118,7 +118,7 @@ Puppet::Type.type(:mongodb_shard).provide(:mongo, :parent => Puppet::Provider::M
           :keys     =>  get_shard_collection_details(output['databases'], s['_id']),
           :provider => :mongo,
         }
-      end 
+      end
     end
     properties
   end
@@ -231,6 +231,7 @@ Puppet::Type.type(:mongodb_shard).provide(:mongo, :parent => Puppet::Provider::M
     #Hack to avoid non-json empty sets
     output = "{}" if output == "null\n"
     output.gsub!(/\s*/, '')
+    output.gsub!(/(ISODate|ObjectId)\((.+?)\)/, '\2 ').gsub!(/(Timestamp|NumberLong)\((.+?)\)/,'"\2"')
     JSON.parse(output)
   end
 end
