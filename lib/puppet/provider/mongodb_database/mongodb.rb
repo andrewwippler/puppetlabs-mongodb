@@ -6,12 +6,14 @@ Puppet::Type.type(:mongodb_database).provide(:mongodb, :parent => Puppet::Provid
   defaultfor :kernel => 'Linux'
 
   def self.instances
-    require 'json'
-    dbs = JSON.parse mongo_eval('printjson(db.getMongo().getDBs())')
+    if db_ismaster
+      require 'json'
+      dbs = JSON.parse mongo_eval('printjson(db.getMongo().getDBs())')
 
-    dbs['databases'].collect do |db|
-      new(:name   => db['name'],
-          :ensure => :present)
+      dbs['databases'].collect do |db|
+        new(:name   => db['name'],
+            :ensure => :present)
+      end
     end
   end
 
