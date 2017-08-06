@@ -10,6 +10,7 @@ class mongodb::params inherits mongodb::globals {
   $restart               = true
   $create_admin          = false
   $admin_username        = 'admin'
+  $handle_creds          = true
   $store_creds           = false
   $rcfile                = "${::root_home}/.mongorc.js"
   $dbpath_fix            = true
@@ -119,10 +120,15 @@ class mongodb::params inherits mongodb::globals {
       if $manage_package {
         $user  = pick($::mongodb::globals::user, 'mongodb')
         $group = pick($::mongodb::globals::group, 'mongodb')
+        if $mongodb::globals::use_enterprise_repo == true {
+            $edition = 'enterprise'
+        } else {
+            $edition = 'org'
+        }
         if ($version == undef) {
-          $server_package_name = pick($::mongodb::globals::server_package_name, 'mongodb-org-server')
-          $client_package_name = pick($::mongodb::globals::client_package_name, 'mongodb-org-shell')
-          $mongos_package_name = pick($::mongodb::globals::mongos_package_name, 'mongodb-org-mongos')
+          $server_package_name = pick($::mongodb::globals::server_package_name, "mongodb-${edition}-server")
+          $client_package_name = pick($::mongodb::globals::client_package_name, "mongodb-${edition}-shell")
+          $mongos_package_name = pick($::mongodb::globals::mongos_package_name, "mongodb-${edition}-mongos")
           $package_ensure = true
           $package_ensure_client = true
           $package_ensure_mongos = true
@@ -131,9 +137,9 @@ class mongodb::params inherits mongodb::globals {
         } else {
           # check if the version is greater than 2.6
           if $version and (versioncmp($version, '2.6.0') >= 0) {
-            $server_package_name = pick($::mongodb::globals::server_package_name, 'mongodb-org-server')
-            $client_package_name = pick($::mongodb::globals::client_package_name, 'mongodb-org-shell')
-            $mongos_package_name = pick($::mongodb::globals::mongos_package_name, 'mongodb-org-mongos')
+            $server_package_name = pick($::mongodb::globals::server_package_name, "mongodb-${edition}-server")
+            $client_package_name = pick($::mongodb::globals::client_package_name, "mongodb-${edition}-shell")
+            $mongos_package_name = pick($::mongodb::globals::mongos_package_name, "mongodb-${edition}-mongos")
             $package_ensure = $version
             $package_ensure_client = $version
             $package_ensure_mongos = $version
@@ -153,7 +159,7 @@ class mongodb::params inherits mongodb::globals {
         $mongos_config           = '/etc/mongodb-shard.conf'
         $dbpath                  = '/var/lib/mongodb'
         $logpath                 = '/var/log/mongodb/mongodb.log'
-        $pidfilepath             = '/var/run/mongod.pid'
+        $pidfilepath             = pick($::mongodb::globals::pidfilepath, '/var/run/mongod.pid')
         $bind_ip                 = pick($::mongodb::globals::bind_ip, ['127.0.0.1'])
       } else {
         # although we are living in a free world,

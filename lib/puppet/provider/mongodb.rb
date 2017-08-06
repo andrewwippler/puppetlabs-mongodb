@@ -56,7 +56,7 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       config_hash['bindip'] = config['bind_ip']
       config_hash['port'] = config['port']
       config_hash['ipv6'] = config['ipv6']
-      config_hash['ssl'] = config['sslMode']
+      config_hash['ssl'] = config['sslOnNormalPorts']
       config_hash['sslcert'] = config['sslPEMKeyFile']
       config_hash['sslca'] = config['sslCAFile']
       config_hash['auth'] = config['auth']
@@ -130,11 +130,12 @@ class Puppet::Provider::Mongodb < Puppet::Provider
   end
 
   def self.db_ismaster
-    cmd_ismaster = 'printjson(db.isMaster())'
+    cmd_ismaster = 'db.isMaster().ismaster'
     if mongorc_file
       cmd_ismaster = mongorc_file + cmd_ismaster
     end
     db = 'admin'
+<<<<<<< HEAD
     out = mongo_cmd(db, get_conn_string, cmd_ismaster)
     out.gsub!(/ObjectId\(([^)]*)\)/, '\1')
     out.gsub!(/ISODate\((.+?)\)/, '\1 ')
@@ -143,6 +144,10 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     res = JSON.parse out
 
     return res['ismaster']
+=======
+    res = mongo_cmd(db, get_conn_string, cmd_ismaster).to_s.chomp()
+    res.eql?('true') ? true : false
+>>>>>>> 2feae027bcee4c3cf5957d81b7edc6fd5905b3c0
   end
 
   def db_ismaster
