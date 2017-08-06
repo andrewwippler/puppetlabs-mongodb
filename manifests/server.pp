@@ -109,20 +109,12 @@ class mongodb::server (
       ~> class { 'mongodb::server::service': }
       -> anchor { 'mongodb::server::end': }
     } else {
-<<<<<<< HEAD
-      anchor { 'mongodb::server::start': }->
-      class { 'mongodb::server::install': }->
-      class { 'mongodb::server::service': }->
-      class { 'mongodb::server::config': }->
-      anchor { 'mongodb::server::end': }
-=======
       anchor { 'mongodb::server::start': }
       -> class { 'mongodb::server::install': }
       # If $restart is false, config changes won't restart the service (->)
       -> class { 'mongodb::server::config': }
       -> class { 'mongodb::server::service': }
       -> anchor { 'mongodb::server::end': }
->>>>>>> 2feae027bcee4c3cf5957d81b7edc6fd5905b3c0
     }
   } else {
     anchor { 'mongodb::server::start': }

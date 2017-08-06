@@ -135,19 +135,8 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       cmd_ismaster = mongorc_file + cmd_ismaster
     end
     db = 'admin'
-<<<<<<< HEAD
-    out = mongo_cmd(db, get_conn_string, cmd_ismaster)
-    out.gsub!(/ObjectId\(([^)]*)\)/, '\1')
-    out.gsub!(/ISODate\((.+?)\)/, '\1 ')
-    out.gsub!(/^Error\:.+/, '')
-    out.gsub!(/(Timestamp|NumberLong)\((.+?)\)/,'"\2"')
-    res = JSON.parse out
-
-    return res['ismaster']
-=======
     res = mongo_cmd(db, get_conn_string, cmd_ismaster).to_s.chomp()
     res.eql?('true') ? true : false
->>>>>>> 2feae027bcee4c3cf5957d81b7edc6fd5905b3c0
   end
 
   def db_ismaster
