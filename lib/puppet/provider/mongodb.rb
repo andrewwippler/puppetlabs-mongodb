@@ -88,11 +88,12 @@ class Puppet::Provider::Mongodb < Puppet::Provider
   def self.mongo_cmd(db, host, cmd)
     config = get_mongo_conf
 
-    args = [db, '--quiet', '--host', host]
+    args = [db, '--quiet']
     args.push('--ipv6') if ipv6_is_enabled(config)
     args.push('--sslAllowInvalidHostnames') if ssl_invalid_hostnames(config)
 
     if ssl_is_enabled(config)
+      args += ['--host', Socket.gethostbyname(Socket.gethostname).first ]
       args.push('--ssl')
       args += ['--sslPEMKeyFile', config['sslcert']]
 
@@ -100,6 +101,9 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       unless ssl_ca.nil?
         args += ['--sslCAFile', ssl_ca]
       end
+    else
+      args += ['--host', host]
+      
     end
 
     args += ['--eval', cmd]
